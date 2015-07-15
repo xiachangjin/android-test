@@ -1,6 +1,7 @@
 package com.example.xiachanjin.test;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.CursorWrapper;
 import android.os.Bundle;
@@ -196,6 +197,11 @@ public class MainActivity extends Activity {
 
     }
 
+    public void startFragment(View view) {
+        Intent intent = new Intent(MainActivity.this, MainFragmentActivity.class);
+        startActivity(intent);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -209,7 +215,8 @@ public class MainActivity extends Activity {
                 queryTheCursor();
             }
         });
-        listView = (ListView) this.findViewById(R.id.listview);
+
+        //listView = (ListView) this.findViewById(R.id.listview);
         //initViews4();
     }
 

@@ -42,6 +42,18 @@
             android:layout_weight="1"/>
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttons"
+        android:id="@+id/buttons_fragment">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/fragment"
+            android:text="fragment"
+            android:onClick="startFragment"/>
+    </LinearLayout>
 
     <!--<EditText-->
         <!--android:id="@+id/edit"-->
@@ -55,6 +67,6 @@
         android:id="@+id/listview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@id/buttons"></ListView>
+        android:layout_below="@id/buttons_fragment"></ListView>
 
 </RelativeLayout>
