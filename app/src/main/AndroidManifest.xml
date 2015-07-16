@@ -23,7 +23,11 @@
 
         <service
             android:name=".MyService"
-            >
+            android:process=":remote" >
+            <intent-filter>
+                <action android:name=".IMyAidlInterface"></action>
+            </intent-filter>
+
         </service>
     </application>
 

@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import android.os.RemoteException;
 import android.util.Log;
 
 /**
@@ -17,7 +18,23 @@ public class MyService extends Service {
         public void onMyBinderExec() {
             Log.d(TAG, "onMyBinderExec");
         }
-    }
+    };
+
+    private  IMyAidlInterface.Stub mBinder= new IMyAidlInterface.Stub() {
+        @Override
+        public String toUpperCase(String str) throws RemoteException {
+            if(str != null) {
+                return str.toUpperCase();
+            }
+
+            return null;
+        }
+
+        @Override
+        public int plus(int a, int b) throws RemoteException {
+            return a+b;
+        }
+    };
 
     @Override
     public void onCreate() {
@@ -52,6 +69,7 @@ public class MyService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         Log.d(TAG, "onbind");
-        return binder;
+        //return binder;
+        return mBinder;
     }
 }

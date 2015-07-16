@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.database.CursorWrapper;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.RemoteException;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -20,6 +21,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.SimpleCursorAdapter;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +40,7 @@ public class MainActivity extends Activity {
     private DBManager dbMgr;
     private Button queryBtn;
     private MyService.MyBinder binder;
+    private IMyAidlInterface aidlInterface;
 
     private ServiceConnection connection = new ServiceConnection() {
         @Override
@@ -49,7 +52,25 @@ public class MainActivity extends Activity {
         @Override
         public void onServiceDisconnected(ComponentName name) {
             Log.d(TAG, "onServiceConnected " + name);
+        }
+    };
 
+    private ServiceConnection aidlConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            aidlInterface = IMyAidlInterface.Stub.asInterface(service);
+            try {
+                int sum = aidlInterface.plus(1, 2);
+                String str = aidlInterface.toUpperCase("abcdefg");
+                Log.d(TAG, "aidl: 1+2=" + sum + " ,abcdefg=" + str);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
         }
     };
 
@@ -236,13 +257,13 @@ public class MainActivity extends Activity {
     public void bindMyService(View view) {
         Log.d(TAG, "bindService");
         Intent intent = new Intent(this, MyService.class);
-        bindService(intent, connection, BIND_AUTO_CREATE);
+        bindService(intent, aidlConnection, BIND_AUTO_CREATE);
     }
 
     public void unbindMyService(View view) {
-        binder.onMyBinderExec();
+        //binder.onMyBinderExec();
         Log.d(TAG, "unbindService");
-        unbindService(connection);
+        unbindService(aidlConnection);
     }
 
 
