@@ -21,6 +21,10 @@
             android:name=".MainFragmentActivity" >
         </activity>
 
+        <service
+            android:name=".MyService"
+            >
+        </service>
     </application>
 
 </manifest>

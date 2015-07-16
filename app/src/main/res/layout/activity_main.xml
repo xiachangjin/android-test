@@ -55,18 +55,43 @@
             android:onClick="startFragment"/>
     </LinearLayout>
 
-    <!--<EditText-->
-        <!--android:id="@+id/edit"-->
-        <!--android:layout_width="fill_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:hint="edit here"-->
-        <!--android:layout_below="@id/hello"-->
-        <!--/>-->
+    <LinearLayout
+        android:id="@+id/services"
+        android:layout_below="@id/buttons_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="start service"
+            android:layout_weight="1"
+            android:onClick="startMyService"/>
+        <Button
+            android:id="@+id/stop_service"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="stop service"
+            android:layout_weight="1"
+            android:onClick="stopMyService" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="bind service"
+            android:onClick="bindMyService"
+            android:layout_weight="1"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="unbind service"
+            android:onClick="unbindMyService"
+            android:layout_weight="1"/>
+    </LinearLayout>
+
 
     <ListView
         android:id="@+id/listview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@id/buttons_fragment"></ListView>
+        android:layout_below="@id/services"></ListView>
 
 </RelativeLayout>

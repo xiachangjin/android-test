@@ -1,10 +1,14 @@
 package com.example.xiachanjin.test;
 
 import android.app.Activity;
+import android.app.Service;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.database.CursorWrapper;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -33,6 +37,21 @@ public class MainActivity extends Activity {
     private ArrayList<HashMap<String, Object>> arrayList3;
     private DBManager dbMgr;
     private Button queryBtn;
+    private MyService.MyBinder binder;
+
+    private ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            binder = (MyService.MyBinder)service;
+            Log.d(TAG, "onServiceConnected " + name);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Log.d(TAG, "onServiceConnected " + name);
+
+        }
+    };
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -202,6 +221,31 @@ public class MainActivity extends Activity {
         startActivity(intent);
     }
 
+    public void startMyService(View view) {
+        Log.d(TAG, "startService");
+        Intent intent = new Intent(this, MyService.class);
+        startService(intent);
+    }
+
+    public void stopMyService(View view) {
+        Log.d(TAG, "stopService");
+        Intent intent = new Intent(this, MyService.class);
+        stopService(intent);
+    }
+
+    public void bindMyService(View view) {
+        Log.d(TAG, "bindService");
+        Intent intent = new Intent(this, MyService.class);
+        bindService(intent, connection, BIND_AUTO_CREATE);
+    }
+
+    public void unbindMyService(View view) {
+        binder.onMyBinderExec();
+        Log.d(TAG, "unbindService");
+        unbindService(connection);
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -218,6 +262,8 @@ public class MainActivity extends Activity {
 
         //listView = (ListView) this.findViewById(R.id.listview);
         //initViews4();
+        Log.d(TAG, "onCreate: thread id=" + Thread.currentThread().getId() + "; process id="
+                + android.os.Process.myPid());
     }
 
     @Override
