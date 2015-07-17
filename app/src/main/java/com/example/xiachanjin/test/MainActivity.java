@@ -21,6 +21,8 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.SimpleCursorAdapter;
 
+import com.google.gson.Gson;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -266,6 +268,11 @@ public class MainActivity extends Activity {
         unbindService(aidlConnection);
     }
 
+    public void openActionBar(View view) {
+        Log.d(TAG, "openActionBar");
+        Intent intent = new Intent(this, MyActionBarActivity.class);
+        startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -287,10 +294,40 @@ public class MainActivity extends Activity {
                 + android.os.Process.myPid());
     }
 
+    public class Foo {
+        public int id;
+        public String body;
+        public float number;
+        public String created_at;
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
         Log.d(TAG, "onStart");
+        String str = "{\n" +
+                "    \"id\": 100,\n" +
+                "    \"body\": \"It is my post\",\n" +
+                "    \"number\": 0.13,\n" +
+                "    \"created_at\": \"2014-05-22 19:12:38\"\n" +
+                "}";
+        Foo foo = new Gson().fromJson(str, Foo.class);
+        Log.d(TAG, "foo.id=" + foo.id + " ,body=" + foo.body + " , number=" + foo.number
+                + " ,created at" + foo.created_at);
+
+        String str2 = "[{\n" +
+                "    \"id\": 100,\n" +
+                "    \"body\": \"It is my post1\",\n" +
+                "    \"number\": 0.13,\n" +
+                "    \"created_at\": \"2014-05-20 19:12:38\"\n" +
+                "},\n" +
+                "{\n" +
+                "    \"id\": 101,\n" +
+                "    \"body\": \"It is my post2\",\n" +
+                "    \"number\": 0.14,\n" +
+                "    \"created_at\": \"2014-05-22 19:12:38\"\n" +
+                "}]";
+        Foo[] foos = new Gson().fromJson(str2, Foo[].class);
     }
 
     @Override
