@@ -7,9 +7,8 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.database.CursorWrapper;
-import android.os.Bundle;
-import android.os.IBinder;
-import android.os.RemoteException;
+import android.os.*;
+import android.os.Process;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -28,6 +27,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 
 public class MainActivity extends Activity {
@@ -274,26 +278,6 @@ public class MainActivity extends Activity {
         startActivity(intent);
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        dbMgr = new DBManager(this);
-        queryBtn = (Button) this.findViewById(R.id.btn_query);
-        queryBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //query();
-                queryTheCursor();
-            }
-        });
-
-        //listView = (ListView) this.findViewById(R.id.listview);
-        //initViews4();
-        Log.d(TAG, "onCreate: thread id=" + Thread.currentThread().getId() + "; process id="
-                + android.os.Process.myPid());
-    }
-
     public class Foo {
         public int id;
         public String body;
@@ -301,10 +285,7 @@ public class MainActivity extends Activity {
         public String created_at;
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d(TAG, "onStart");
+    public void gsonTest() {
         String str = "{\n" +
                 "    \"id\": 100,\n" +
                 "    \"body\": \"It is my post\",\n" +
@@ -330,6 +311,138 @@ public class MainActivity extends Activity {
         Foo[] foos = new Gson().fromJson(str2, Foo[].class);
     }
 
+    private void threadTest() {
+
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "onResume: thread id=" + Thread.currentThread().getId() + "; process id="
+                        + android.os.Process.myPid());
+            }
+        };
+
+        Thread thread = new Thread(runnable, "xiacj");
+        thread.start();
+
+        Thread thread1 = new Thread() {
+            @Override
+            public void run() {
+                android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
+                super.run();
+                Log.d(TAG, "onResume: thread1 id=" + Thread.currentThread().getId() + "; process id="
+                        + android.os.Process.myPid());
+
+            }
+        };
+        thread1.start();
+    }
+    public class WorkerThread implements Runnable {
+        private String command;
+
+        public WorkerThread(String s){
+            this.command=s;
+        }
+
+        @Override
+        public void run() {
+            System.out.println(Thread.currentThread().getName()+" Start. Command = "+command);
+            processCommand();
+            System.out.println(Thread.currentThread().getName()+" End.");
+        }
+
+        private void processCommand() {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public String toString(){
+            return this.command;
+        }
+    }
+
+    class MyRunnable implements Runnable {
+        private ThreadPoolExecutor mExecutor;
+        private int mSeconds;
+        private boolean mRun = true;
+
+        public  MyRunnable(ThreadPoolExecutor executor, int delay) {
+            mExecutor = executor;
+            mSeconds = delay;
+        }
+
+        @Override
+        public void run() {
+            System.out.println(
+                    String.format("[monitor] [%d/%d] Active: %d, Completed: %d, Task: %d, isShutdown: %s, isTerminated: %s",
+                            this.mExecutor.getPoolSize(),
+                            this.mExecutor.getCorePoolSize(),
+                            this.mExecutor.getActiveCount(),
+                            this.mExecutor.getCompletedTaskCount(),
+                            this.mExecutor.getTaskCount(),
+                            this.mExecutor.isShutdown(),
+                            this.mExecutor.isTerminated()));
+            try {
+                Thread.sleep(mSeconds*1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void threadsTest()  {
+        ThreadFactory threadFactory = Executors.defaultThreadFactory();
+        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(2, 4,10,
+                TimeUnit.NANOSECONDS, new ArrayBlockingQueue<Runnable>(2), threadFactory );
+        Runnable runnable = new MyRunnable(threadPoolExecutor, 3);
+        Thread thread = new Thread(runnable);
+        thread.start();
+        for (int i=0; i<3; i++) {
+            threadPoolExecutor.execute(new WorkerThread("cmd" + i));
+        }
+
+        try {
+            Thread.sleep(30000);
+            threadPoolExecutor.shutdown();
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        dbMgr = new DBManager(this);
+        queryBtn = (Button) this.findViewById(R.id.btn_query);
+        queryBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //query();
+                queryTheCursor();
+            }
+        });
+
+        //listView = (ListView) this.findViewById(R.id.listview);
+        //initViews4();
+        Log.d(TAG, "onCreate: thread id=" + Thread.currentThread().getId() + "; process id="
+                + android.os.Process.myPid());
+    }
+
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart");
+
+    }
+
     @Override
     protected void onRestart() {
         super.onRestart();
@@ -340,9 +453,10 @@ public class MainActivity extends Activity {
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
+        threadsTest();
     }
 
-    @Override
+        @Override
     protected void onPause() {
         super.onPause();
         Log.d(TAG, "onPause");
