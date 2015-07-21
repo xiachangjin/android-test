@@ -374,21 +374,27 @@ public class MainActivity extends Activity {
             mSeconds = delay;
         }
 
+        public  void exitRun() {
+            mRun = false;
+        }
+
         @Override
         public void run() {
-            System.out.println(
-                    String.format("[monitor] [%d/%d] Active: %d, Completed: %d, Task: %d, isShutdown: %s, isTerminated: %s",
-                            this.mExecutor.getPoolSize(),
-                            this.mExecutor.getCorePoolSize(),
-                            this.mExecutor.getActiveCount(),
-                            this.mExecutor.getCompletedTaskCount(),
-                            this.mExecutor.getTaskCount(),
-                            this.mExecutor.isShutdown(),
-                            this.mExecutor.isTerminated()));
-            try {
-                Thread.sleep(mSeconds*1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            while(mRun) {
+                System.out.println(
+                        String.format("[monitor] [%d/%d] Active: %d, Completed: %d, Task: %d, isShutdown: %s, isTerminated: %s",
+                                this.mExecutor.getPoolSize(),
+                                this.mExecutor.getCorePoolSize(),
+                                this.mExecutor.getActiveCount(),
+                                this.mExecutor.getCompletedTaskCount(),
+                                this.mExecutor.getTaskCount(),
+                                this.mExecutor.isShutdown(),
+                                this.mExecutor.isTerminated()));
+                try {
+                    Thread.sleep(mSeconds * 4000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -396,7 +402,7 @@ public class MainActivity extends Activity {
     private void threadsTest()  {
         ThreadFactory threadFactory = Executors.defaultThreadFactory();
         ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(2, 4,10,
-                TimeUnit.NANOSECONDS, new ArrayBlockingQueue<Runnable>(2), threadFactory );
+                TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(2), threadFactory );
         Runnable runnable = new MyRunnable(threadPoolExecutor, 3);
         Thread thread = new Thread(runnable);
         thread.start();
@@ -404,13 +410,13 @@ public class MainActivity extends Activity {
             threadPoolExecutor.execute(new WorkerThread("cmd" + i));
         }
 
-        try {
-            Thread.sleep(30000);
-            threadPoolExecutor.shutdown();
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(30000);
+//            threadPoolExecutor.shutdown();
+//            Thread.sleep(5000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
     }
 
@@ -453,7 +459,7 @@ public class MainActivity extends Activity {
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
-        threadsTest();
+//        threadsTest();
     }
 
         @Override
