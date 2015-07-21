@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.database.CursorWrapper;
@@ -466,6 +467,8 @@ public class MainActivity extends Activity {
         super.onResume();
         Log.d(TAG, "onResume");
 //        threadsTest();
+        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_TIME_TICK);
+        this.registerReceiver(new MyReceiver(),intentFilter);
     }
 
         @Override
