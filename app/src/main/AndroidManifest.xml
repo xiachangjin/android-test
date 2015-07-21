@@ -32,6 +32,11 @@
             android:parentActivityName=".MainActivity" >
         </activity>
 
+        <service android:name=".MyIntentService" >
+            <intent-filter>
+                <action android:name=".MyIntentService" ></action>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

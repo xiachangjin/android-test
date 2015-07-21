@@ -96,10 +96,24 @@
             android:layout_weight="1"/>
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/intentservice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/services" >
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="intent service"
+            android:onClick="startMyIntentService"/>
+    </LinearLayout>
+
+
+
     <ListView
         android:id="@+id/listview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@id/services"></ListView>
+        android:layout_below="@id/intentservice"></ListView>
 
 </RelativeLayout>

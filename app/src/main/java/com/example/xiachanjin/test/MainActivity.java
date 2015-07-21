@@ -419,6 +419,12 @@ public class MainActivity extends Activity {
 //        }
 
     }
+    public void startMyIntentService(View view) {
+        Intent intent = new Intent(this, MyIntentService.class);
+        startService(intent);
+        startService(intent);
+        startService(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
